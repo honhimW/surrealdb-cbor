@@ -1,0 +1,23 @@
+group = 'io.github.honhimw'
+version = '0.0.1'
+description = 'Reactive surrealdb rest client using cbor encoding.'
+
+subprojects {
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+}
+
+tasks.register('publish-snapshot') {
+    version = version + '-SNAPSHOT'
+    finalizedBy ':core:publishAllPublicationsToSonatype-snapshotsRepository'
+}
+tasks.register('publish-release') {
+    finalizedBy ':core:publishAllPublicationsToSonatype-releasesRepository'
+}
+tasks.register('publish-central') {
+    finalizedBy ':core:publishAllPublicationsToSonatype-centralRepository'
+}

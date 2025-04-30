@@ -1,0 +1,32 @@
+[versions]
+version = "0.0.1-SNAPSHOT"
+reactor = "2024.0.5"
+jackson = "2.19.0"
+lombok = "1.18.38"
+slf4j = "2.0.17"
+surreal = "0.2.1"
+jakarta-annotations = "2.1.1"
+
+[libraries.reactor]
+module = "io.projectreactor:reactor-bom"
+version.ref = "reactor"
+
+[libraries.jackson]
+module = "com.fasterxml.jackson:jackson-bom"
+version.ref = "jackson"
+
+[libraries.lombok]
+module = "org.projectlombok:lombok"
+version.ref = "lombok"
+
+[libraries.slf4j]
+module = "org.slf4j:slf4j-api"
+version.ref = "slf4j"
+
+[libraries.surreal]
+module = "com.surrealdb:surrealdb"
+version.ref = "surreal"
+
+[libraries.jakarta-annotations]
+module = "jakarta.annotation:jakarta.annotation-api"
+version.ref = "jakarta-annotations"

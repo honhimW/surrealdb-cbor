@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+configurations {
+    compileOnly { extendsFrom annotationProcessor }
+    testCompileOnly { extendsFrom testAnnotationProcessor }
+}
+
+dependencies {
+    implementation platform(libs.reactor)
+    implementation platform(libs.jackson)
+
+    implementation project(':core')
+
+    implementation libs.slf4j
+    testImplementation libs.surreal
+    implementation "io.projectreactor.netty:reactor-netty-http"
+    implementation 'com.fasterxml.jackson.core:jackson-core'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor'
+
+    testAnnotationProcessor libs.lombok
+    testImplementation 'io.projectreactor:reactor-test'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+
+test {
+    useJUnitPlatform()
+}
