@@ -10,9 +10,9 @@ import java.util.UUID;
 
 public class RecordId implements Serializable {
     
-    private final Table table;
+    public final Table table;
     
-    private final Id id;
+    public final Id id;
 
     public RecordId(Table table, Id id) {
         this.table = table;

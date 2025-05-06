@@ -48,9 +48,9 @@ public class Geometry implements Serializable {
 
     public static class Point implements Geo {
         
-        private final double lon;
+        public final double lon;
 
-        private final double lat;
+        public final double lat;
 
         public Point(double lon, double lat) {
             this.lon = lon;
@@ -60,7 +60,7 @@ public class Geometry implements Serializable {
 
     public static class Line implements Geo {
 
-        private final List<Point> points;
+        public final List<Point> points;
 
         public Line(List<Point> points) {
             this.points = points;
@@ -68,8 +68,8 @@ public class Geometry implements Serializable {
     }
 
     public static class Polygon implements Geo {
-        
-        private final List<Line> lines;
+
+        public final List<Line> lines;
 
         public Polygon(List<Line> lines) {
             this.lines = lines;
@@ -78,7 +78,7 @@ public class Geometry implements Serializable {
 
     public static class MultiPoint implements Geo {
 
-        private final List<Point> points;
+        public final List<Point> points;
 
         public MultiPoint(List<Point> points) {
             this.points = points;
@@ -87,7 +87,7 @@ public class Geometry implements Serializable {
 
     public static class MultiLine implements Geo {
 
-        private final List<Line> lines;
+        public final List<Line> lines;
 
         public MultiLine(List<Line> lines) {
             this.lines = lines;
@@ -96,7 +96,7 @@ public class Geometry implements Serializable {
 
     public static class MultiPolygon implements Geo {
 
-        private final List<Polygon> polygons;
+        public final List<Polygon> polygons;
 
         public MultiPolygon(List<Polygon> polygons) {
             this.polygons = polygons;
@@ -105,9 +105,9 @@ public class Geometry implements Serializable {
 
     public static class Geometries implements Geo {
 
-        private final List<Geometry> geometries;
+        public final List<Geo> geometries;
 
-        public Geometries(List<Geometry> geometries) {
+        public Geometries(List<Geo> geometries) {
             this.geometries = geometries;
         }
     }

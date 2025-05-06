@@ -53,6 +53,7 @@ public class JsonUtils {
             .enable(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES)
             .enable(JsonReadFeature.ALLOW_SINGLE_QUOTES)
             .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .defaultTimeZone(TimeZone.getTimeZone(DateTimeUtils.DEFAULT_ZONE_OFFSET))
         ;
         return builder;

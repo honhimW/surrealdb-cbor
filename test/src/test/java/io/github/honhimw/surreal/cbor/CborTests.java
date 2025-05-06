@@ -10,6 +10,7 @@ import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import io.github.honhimw.surreal.SurrealClient;
 import io.github.honhimw.surreal.util.CborUtils;
 import io.github.honhimw.surreal.util.JsonUtils;
+import io.github.honhimw.surreal.util.UUIDUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -61,9 +62,11 @@ public class CborTests {
     void parser() {
         UUID uuid = UUID.randomUUID();
         String uid = uuid.toString();
-        byte[] uuidBytes = uuidToBytes(uuid);
+        byte[] uuidBytes = UUIDUtils.toBytes(uuid);
         System.out.println(Base64.getEncoder().encodeToString(uuidBytes));
         byte[] bytes = client.sqlBytes("""
+            LET $uid = u'%s';
+            UPSERT test SET id = $uid, name = "bar";
             RETURN {
                 id: tab:hello,
                 foo: "bar",
@@ -72,8 +75,8 @@ public class CborTests {
                 uuid_v7: rand::uuid::v7(),
                 duration: duration::from::millis(2),
                 embedding: [0.1, 0.2, 0.3],
-                uid: u'%s',
-                range: <array> [0..=3],
+                uid: $uid,
+                range: <array> [0..3],
                 coordinates: {
                     type: "MultiPoint",
                     coordinates: [
@@ -120,25 +123,6 @@ public class CborTests {
     void rpc() {
         Object sql = client.sql("RETURN time::now();");
         System.out.println(sql);
-    }
-
-    public static byte[] uuidToBytes(UUID uuid) {
-        long mostSigBits = uuid.getMostSignificantBits();
-        long leastSigBits = uuid.getLeastSignificantBits();
-
-        byte[] bytes = new byte[16];
-
-        // 处理高64位
-        for (int i = 0; i < 8; i++) {
-            bytes[i] = (byte) (mostSigBits >>> 8 * (7 - i));
-        }
-
-        // 处理低64位
-        for (int i = 8; i < 16; i++) {
-            bytes[i] = (byte) (leastSigBits >>> 8 * (7 - (i - 8)));
-        }
-
-        return bytes;
     }
 
 }

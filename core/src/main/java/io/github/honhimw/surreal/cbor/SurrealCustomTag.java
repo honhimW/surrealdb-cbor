@@ -8,6 +8,8 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
+ * <a href="https://surrealdb.com/docs/surrealdb/integration/cbor">CBOR Protocol</a>
+ *
  * @author honhimW
  * @since 2025-04-28
  */
@@ -18,7 +20,7 @@ public enum SurrealCustomTag {
     /**
      * None
      */
-    TAG_6(6, None.class),
+    TAG_6(6, Option.class),
 
     /**
      * Table name
@@ -29,7 +31,7 @@ public enum SurrealCustomTag {
      * Record ID
      */
     TAG_8(8, RecordId.class),
-//    TAG_9(9, UUID.class),
+    //    TAG_9(9, UUID.class),
     TAG_10(10, BigDecimal.class),
 
     /**
@@ -43,22 +45,23 @@ public enum SurrealCustomTag {
      */
     TAG_14(14, Duration.class),
 
-    /**
-     * Future
-     */
-    TAG_15(15, String.class),
+//    TAG_15(15, String.class),
 
     /**
      * UUID
      */
     TAG_37(37, UUID.class),
 
-    /**
-     * Range
+    /*
+    Range
      */
     TAG_49(49, Range.class),
     TAG_50(50, Range.Included.class),
     TAG_51(51, Range.Excluded.class),
+
+    /*
+    Geometry
+     */
     TAG_88(88, Geometry.Point.class),
     TAG_89(89, Geometry.Line.class),
     TAG_90(90, Geometry.Polygon.class),
@@ -70,7 +73,7 @@ public enum SurrealCustomTag {
     ;
 
     public final int tag;
-    private final Class<?> type;
+    public final Class<?> type;
 
     SurrealCustomTag(int tag, Class<?> type) {
         this.tag = tag;
@@ -80,6 +83,15 @@ public enum SurrealCustomTag {
     public static SurrealCustomTag of(int tag) {
         for (SurrealCustomTag customTag : SurrealCustomTag.values()) {
             if (customTag.tag == tag) {
+                return customTag;
+            }
+        }
+        return null;
+    }
+
+    public static SurrealCustomTag of(Class<?> type) {
+        for (SurrealCustomTag customTag : SurrealCustomTag.values()) {
+            if (customTag.type == type) {
                 return customTag;
             }
         }

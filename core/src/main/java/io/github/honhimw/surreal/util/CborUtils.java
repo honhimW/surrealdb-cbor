@@ -6,16 +6,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.cbor.CBORParser;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.honhimw.surreal.cbor.CustomTagsCborParser;
-import io.github.honhimw.surreal.cbor.ser.CustomTagDurationSerializer;
+import io.github.honhimw.surreal.cbor.ser.*;
 import jakarta.annotation.Nonnull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.time.Duration;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -41,7 +41,7 @@ public class CborUtils {
         CBORMapper.Builder builder = CBORMapper.builder();
 
         builder
-            .addModules(timeModule())
+            .addModules(new JavaTimeModule(), customModule())
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
             .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS)
@@ -50,10 +50,24 @@ public class CborUtils {
         return builder;
     }
 
-    public static JavaTimeModule timeModule() {
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(Duration.class, CustomTagDurationSerializer.INSTANCE);
-        return javaTimeModule;
+    public static SimpleModule customModule() {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Tag6Serializer.INSTANCE);
+        module.addSerializer(Tag7Serializer.INSTANCE);
+        module.addSerializer(Tag8Serializer.INSTANCE);
+        module.addSerializer(Tag14Serializer.INSTANCE);
+        module.addSerializer(Tag37Serializer.INSTANCE);
+        module.addSerializer(Tag49Serializer.INSTANCE);
+        module.addSerializer(Tag50Serializer.INSTANCE);
+        module.addSerializer(Tag51Serializer.INSTANCE);
+        module.addSerializer(Tag88Serializer.INSTANCE);
+        module.addSerializer(Tag89Serializer.INSTANCE);
+        module.addSerializer(Tag90Serializer.INSTANCE);
+        module.addSerializer(Tag91Serializer.INSTANCE);
+        module.addSerializer(Tag92Serializer.INSTANCE);
+        module.addSerializer(Tag93Serializer.INSTANCE);
+        module.addSerializer(Tag94Serializer.INSTANCE);
+        return module;
     }
 
     public static byte[] encode(Object obj) {

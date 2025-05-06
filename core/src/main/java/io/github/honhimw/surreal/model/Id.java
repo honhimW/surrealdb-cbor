@@ -1,6 +1,6 @@
 package io.github.honhimw.surreal.model;
 
-import jakarta.annotation.Nonnull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -10,93 +10,67 @@ import java.util.UUID;
  * @since 2025-04-28
  */
 
-public abstract class Id implements Serializable {
+public class Id implements Serializable {
 
     public static Id of(String id) {
-        return new StringId(id);
+        return new Id(Kind.STRING, id);
     }
 
     public static Id of(long id) {
-        return new LongId(id);
+        return new Id(Kind.LONG, id);
     }
 
     public static Id of(UUID id) {
-        return new UuidId(id);
+        return new Id(Kind.UUID, id);
     }
 
+    public final Kind kind;
+
+    public final Object value;
+
+    private Id(Kind kind, Object value) {
+        this.kind = kind;
+        this.value = value;
+    }
+
+    @JsonIgnore
     public boolean isLong() {
-        return false;
+        return kind == Kind.LONG;
     }
 
+    @JsonIgnore
     public boolean isString() {
-        return false;
+        return kind == Kind.STRING;
     }
 
+    @JsonIgnore
     public boolean isUuid() {
-        return false;
+        return kind == Kind.UUID;
     }
 
-    @Nonnull
-    public Kind kind() {
-        return Kind.UNKNOWN;
+    public long longValue() {
+        if (kind == Kind.LONG) {
+            return (Long) value;
+        }
+        throw new IllegalStateException("Not a long id");
+    }
+
+    public String stringValue() {
+        if (kind == Kind.STRING) {
+            return (String) value;
+        }
+        throw new IllegalStateException("Not a String id");
+    }
+
+    public UUID uuidValue() {
+        if (kind == Kind.UUID) {
+            return (UUID) value;
+        }
+        throw new IllegalStateException("Not a UUID id");
     }
 
     public enum Kind {
         LONG, STRING, UUID, UNKNOWN
-    }
-
-    static class StringId extends Id {
-
-        private final String id;
-
-        StringId(String id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean isString() {
-            return true;
-        }
-
-        @Nonnull
-        @Override
-        public Kind kind() {
-            return Kind.STRING;
-        }
-    }
-
-    static class LongId extends Id {
-
-        private final long id;
-
-        LongId(long id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean isLong() {
-            return true;
-        }
-
-        @Nonnull
-        @Override
-        public Kind kind() {
-            return Kind.LONG;
-        }
-    }
-
-    static class UuidId extends Id {
-
-        private final UUID id;
-
-        UuidId(UUID id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean isUuid() {
-            return true;
-        }
     }
 
 }

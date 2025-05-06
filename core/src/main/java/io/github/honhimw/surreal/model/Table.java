@@ -1,18 +1,19 @@
 package io.github.honhimw.surreal.model;
 
-import com.fasterxml.jackson.core.TreeNode;
 import io.github.honhimw.surreal.cbor.SurrealCustomTag;
+
+import java.io.Serializable;
 
 /**
  * @author honhimW
  * @since 2025-04-30
  */
 
-public class Table implements CustomType<Table> {
+public class Table implements Serializable {
 
     public static final SurrealCustomTag TAG = SurrealCustomTag.TAG_7;
-    
-    private final String name;
+
+    public final String name;
 
     public Table(String name) {
         this.name = name;
@@ -22,8 +23,4 @@ public class Table implements CustomType<Table> {
         return new Table(name);
     }
 
-    @Override
-    public Table from(TreeNode treeNode) {
-        return null;
-    }
 }

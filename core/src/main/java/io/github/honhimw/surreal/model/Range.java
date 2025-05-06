@@ -9,9 +9,9 @@ import java.io.Serializable;
 
 public class Range implements Serializable {
 
-    private final Value lowerBound;
+    public final Value lowerBound;
 
-    private final Value upperBound;
+    public final Value upperBound;
 
     public Range(Value lowerBound, Value upperBound) {
         this.lowerBound = lowerBound;
@@ -20,7 +20,7 @@ public class Range implements Serializable {
 
     public static class Value implements Serializable {
 
-        private final int value;
+        public final int value;
 
         public Value(int value) {
             this.value = value;
