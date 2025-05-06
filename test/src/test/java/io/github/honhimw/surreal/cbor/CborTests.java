@@ -8,6 +8,7 @@ import com.fasterxml.jackson.dataformat.cbor.CBORGenerator;
 import com.fasterxml.jackson.dataformat.cbor.CBORParser;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import io.github.honhimw.surreal.SurrealClient;
+import io.github.honhimw.surreal.model.Response;
 import io.github.honhimw.surreal.util.CborUtils;
 import io.github.honhimw.surreal.util.JsonUtils;
 import io.github.honhimw.surreal.util.UUIDUtils;
@@ -91,6 +92,8 @@ public class CborTests {
         byte[] encode = CborUtils.encode(jsonNode1);
         JsonNode jsonNode2 = CborUtils.readTree(encode);
         System.out.println("JsonUtils.toPrettyJson(jsonNode2) = " + JsonUtils.toPrettyJson(jsonNode2));
+        Response decode = CborUtils.decode(encode, Response.class);
+        System.out.println(decode.size());
     }
 
     @Test

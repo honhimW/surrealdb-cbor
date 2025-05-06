@@ -5,7 +5,7 @@ package io.github.honhimw.surreal.util;
  * @since 2025-04-30
  */
 
-public class Err {
+public class Try {
 
     public static <T> T call(Call<T> call) {
         try {

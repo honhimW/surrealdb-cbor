@@ -1,6 +1,8 @@
 package io.github.honhimw.surreal.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -28,7 +30,8 @@ public class Id implements Serializable {
 
     public final Object value;
 
-    private Id(Kind kind, Object value) {
+    @JsonCreator
+    public Id(@JsonProperty("kind") Kind kind, @JsonProperty("value") Object value) {
         this.kind = kind;
         this.value = value;
     }

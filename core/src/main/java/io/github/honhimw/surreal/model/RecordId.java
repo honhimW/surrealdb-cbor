@@ -1,5 +1,8 @@
 package io.github.honhimw.surreal.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -14,7 +17,8 @@ public class RecordId implements Serializable {
     
     public final Id id;
 
-    public RecordId(Table table, Id id) {
+    @JsonCreator
+    public RecordId(@JsonProperty("table") Table table, @JsonProperty("id") Id id) {
         this.table = table;
         this.id = id;
     }

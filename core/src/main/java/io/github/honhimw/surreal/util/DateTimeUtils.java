@@ -16,16 +16,7 @@ public class DateTimeUtils {
 
     public static final TimeZone DEFAULT_TIME_ZONE = TimeZone.getDefault();
 
-    public static final ZoneOffset UTC_PLUS_8 = ZoneOffset.ofHours(8);
-
-    /**
-     * Chinese Standard Time
-     * <p>
-     * Warning: CST also means Central Standard Time, which is means UTC-6
-     */
-    public static final ZoneOffset CST = UTC_PLUS_8;
-
-    public static ZoneOffset DEFAULT_ZONE_OFFSET = UTC_PLUS_8;
+    public static final ZoneOffset DEFAULT_ZONE_OFFSET = ZoneId.systemDefault().getRules().getOffset(Instant.now());
 
     public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
 
@@ -112,7 +103,7 @@ public class DateTimeUtils {
     }
 
     public static String format(Instant instant, DateTimeFormatter formatter) {
-        return instant.atOffset(DEFAULT_ZONE_OFFSET).format(formatter);
+        return instant.atZone(ZoneId.systemDefault()).format(formatter);
     }
 
     /**

@@ -1,5 +1,8 @@
 package io.github.honhimw.surreal.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 /**
@@ -9,13 +12,14 @@ import java.io.Serializable;
 
 public class Range implements Serializable {
 
-    public final Value lowerBound;
+    public final Value lower;
 
-    public final Value upperBound;
+    public final Value upper;
 
-    public Range(Value lowerBound, Value upperBound) {
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
+    @JsonCreator
+    public Range(@JsonProperty("lower") Value lower, @JsonProperty("upperBound") Value upper) {
+        this.lower = lower;
+        this.upper = upper;
     }
 
     public static class Value implements Serializable {

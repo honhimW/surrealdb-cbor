@@ -1,5 +1,8 @@
 package io.github.honhimw.surreal.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +55,8 @@ public class Geometry implements Serializable {
 
         public final double lat;
 
-        public Point(double lon, double lat) {
+        @JsonCreator
+        public Point(@JsonProperty("lon") double lon, @JsonProperty("lat") double lat) {
             this.lon = lon;
             this.lat = lat;
         }
@@ -62,7 +66,8 @@ public class Geometry implements Serializable {
 
         public final List<Point> points;
 
-        public Line(List<Point> points) {
+        @JsonCreator
+        public Line(@JsonProperty("points") List<Point> points) {
             this.points = points;
         }
     }
@@ -71,7 +76,8 @@ public class Geometry implements Serializable {
 
         public final List<Line> lines;
 
-        public Polygon(List<Line> lines) {
+        @JsonCreator
+        public Polygon(@JsonProperty("lines") List<Line> lines) {
             this.lines = lines;
         }
     }
@@ -80,7 +86,8 @@ public class Geometry implements Serializable {
 
         public final List<Point> points;
 
-        public MultiPoint(List<Point> points) {
+        @JsonCreator
+        public MultiPoint(@JsonProperty("points") List<Point> points) {
             this.points = points;
         }
     }
@@ -89,7 +96,8 @@ public class Geometry implements Serializable {
 
         public final List<Line> lines;
 
-        public MultiLine(List<Line> lines) {
+        @JsonCreator
+        public MultiLine(@JsonProperty("lines") List<Line> lines) {
             this.lines = lines;
         }
     }
@@ -98,7 +106,8 @@ public class Geometry implements Serializable {
 
         public final List<Polygon> polygons;
 
-        public MultiPolygon(List<Polygon> polygons) {
+        @JsonCreator
+        public MultiPolygon(@JsonProperty("polygons") List<Polygon> polygons) {
             this.polygons = polygons;
         }
     }
@@ -107,7 +116,8 @@ public class Geometry implements Serializable {
 
         public final List<Geo> geometries;
 
-        public Geometries(List<Geo> geometries) {
+        @JsonCreator
+        public Geometries(@JsonProperty("geometries") List<Geo> geometries) {
             this.geometries = geometries;
         }
     }

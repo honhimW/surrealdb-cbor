@@ -55,6 +55,7 @@ public class CborUtils {
         module.addSerializer(Tag6Serializer.INSTANCE);
         module.addSerializer(Tag7Serializer.INSTANCE);
         module.addSerializer(Tag8Serializer.INSTANCE);
+        module.addSerializer(Tag12Serializer.INSTANCE);
         module.addSerializer(Tag14Serializer.INSTANCE);
         module.addSerializer(Tag37Serializer.INSTANCE);
         module.addSerializer(Tag49Serializer.INSTANCE);
@@ -99,7 +100,7 @@ public class CborUtils {
             CustomTagsCborParser delegate = new CustomTagsCborParser(parser);
             return MAPPER.readerFor(javaType).readValue(delegate);
         } catch (IOException e) {
-            throw new IllegalArgumentException("can't deserialize from json.", e);
+            throw new IllegalArgumentException("can't deserialize from cbor.", e);
         }
     }
 
@@ -110,7 +111,7 @@ public class CborUtils {
                 CustomTagsCborParser delegate = new CustomTagsCborParser(parser);
                 return MAPPER.readerForMapOf(Object.class).readValue(delegate);
             } catch (IOException e) {
-                throw new IllegalArgumentException("can't deserialize from json", e);
+                throw new IllegalArgumentException("can't deserialize from cbor", e);
             }
         }
         return MAPPER.nullNode().require();
@@ -120,20 +121,24 @@ public class CborUtils {
     public static <T extends JsonNode> T readTree(byte[] bytes) {
         if (bytes != null) {
             try (CBORParser parser = (CBORParser) MAPPER.createParser(bytes)) {
-                CustomTagsCborParser delegate = new CustomTagsCborParser(parser) {
-                    @Override
-                    public void handleCustomTag(int tag) throws IOException {
-                        System.out.println(getParsingContext().pathAsPointer() + ": " + tag);
-                        super.handleCustomTag(tag);
-                    }
-                };
+                CustomTagsCborParser delegate = new CustomTagsCborParser(parser);
                 JsonNode jsonNode = MAPPER.readTree(delegate);
                 return jsonNode.require();
             } catch (IOException e) {
-                throw new IllegalArgumentException("can't deserialize from json", e);
+                throw new IllegalArgumentException("can't deserialize from cbor", e);
             }
         }
         return MAPPER.nullNode().require();
+    }
+
+    @Nonnull
+    public static CustomTagsCborParser createParser(byte[] bytes) {
+        try {
+            CBORParser parser = (CBORParser) MAPPER.createParser(bytes);
+            return new CustomTagsCborParser(parser);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("can't create parser from cbor", e);
+        }
     }
 
 }

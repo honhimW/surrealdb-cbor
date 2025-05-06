@@ -25,8 +25,8 @@ public class Tag49Serializer extends CborSerializer<Range> {
     public void serialize(Range v, CBORGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeTag(SurrealCustomTag.TAG_49.tag);
         gen.writeStartArray(null);
-        serializeNested(v.lowerBound, gen, serializers);
-        serializeNested(v.upperBound, gen, serializers);
+        serializeNested(v.lower, gen, serializers);
+        serializeNested(v.upper, gen, serializers);
         gen.writeEndArray();
     }
 

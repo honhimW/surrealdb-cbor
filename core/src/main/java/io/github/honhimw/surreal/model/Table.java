@@ -1,5 +1,7 @@
 package io.github.honhimw.surreal.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.honhimw.surreal.cbor.SurrealCustomTag;
 
 import java.io.Serializable;
@@ -15,7 +17,8 @@ public class Table implements Serializable {
 
     public final String name;
 
-    public Table(String name) {
+    @JsonCreator
+    public Table(@JsonProperty("name") String name) {
         this.name = name;
     }
 
