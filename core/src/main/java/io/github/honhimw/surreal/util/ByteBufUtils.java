@@ -23,13 +23,12 @@ public class ByteBufUtils {
         return Flux.using(() -> readableByteChannel,
             channel -> Flux.generate(sink -> {
                 try {
-                    byte[] buffer = new byte[1024];
-                    ByteBuffer dst = ByteBuffer.allocateDirect(1024);
-                    int bytesRead = channel.read(dst);
+                    ByteBuffer bb = ByteBuffer.allocateDirect(1024);
+                    int bytesRead = channel.read(bb);
                     if (bytesRead == -1) {
                         sink.complete();
                     } else {
-                        sink.next(Unpooled.wrappedBuffer(dst));
+                        sink.next(Unpooled.wrappedBuffer(bb));
                     }
                 } catch (IOException ignored) {
                 }

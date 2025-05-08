@@ -10,14 +10,14 @@ public enum Protocol {
 
     HTTPS("https"),
 
-    WS("ws"),
-
-    WSS("wss"),
-
-    /**
-     * Requires: com.surrealdb:surrealdb-java
-     */
-    MEMORY("memory"),
+//    WS("ws"),
+//
+//    WSS("wss"),
+//
+//    /**
+//     * Requires: com.surrealdb:surrealdb-java
+//     */
+//    MEMORY("memory"),
     ;
 
     private final String raw;

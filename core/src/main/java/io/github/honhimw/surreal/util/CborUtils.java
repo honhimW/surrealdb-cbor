@@ -1,5 +1,6 @@
 package io.github.honhimw.surreal.util;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -27,10 +28,14 @@ import java.util.TimeZone;
 public class CborUtils {
 
 
-    private static final CBORMapper MAPPER = newMapper();
+    private static CBORMapper MAPPER = newMapper();
 
     public static CBORMapper mapper() {
         return MAPPER;
+    }
+
+    public static void mapper(CBORMapper mapper) {
+        MAPPER = mapper;
     }
 
     public static CBORMapper newMapper() {
@@ -96,9 +101,8 @@ public class CborUtils {
 
     @Nonnull
     public static <T> T decode(byte[] bytes, JavaType javaType) {
-        try (CBORParser parser = (CBORParser) MAPPER.createParser(bytes)) {
-            CustomTagsCborParser delegate = new CustomTagsCborParser(parser);
-            return MAPPER.readerFor(javaType).readValue(delegate);
+        try (JsonParser parser = createParser(bytes)) {
+            return MAPPER.readerFor(javaType).readValue(parser);
         } catch (IOException e) {
             throw new IllegalArgumentException("can't deserialize from cbor.", e);
         }
@@ -107,9 +111,8 @@ public class CborUtils {
     @Nonnull
     public static Map<String, Object> readAsMap(byte[] bytes) {
         if (bytes != null) {
-            try (CBORParser parser = (CBORParser) MAPPER.createParser(bytes)) {
-                CustomTagsCborParser delegate = new CustomTagsCborParser(parser);
-                return MAPPER.readerForMapOf(Object.class).readValue(delegate);
+            try (JsonParser parser = createParser(bytes)) {
+                return MAPPER.readerForMapOf(Object.class).readValue(parser);
             } catch (IOException e) {
                 throw new IllegalArgumentException("can't deserialize from cbor", e);
             }
@@ -120,9 +123,8 @@ public class CborUtils {
     @Nonnull
     public static <T extends JsonNode> T readTree(byte[] bytes) {
         if (bytes != null) {
-            try (CBORParser parser = (CBORParser) MAPPER.createParser(bytes)) {
-                CustomTagsCborParser delegate = new CustomTagsCborParser(parser);
-                JsonNode jsonNode = MAPPER.readTree(delegate);
+            try (JsonParser parser = createParser(bytes)) {
+                JsonNode jsonNode = MAPPER.readTree(parser);
                 return jsonNode.require();
             } catch (IOException e) {
                 throw new IllegalArgumentException("can't deserialize from cbor", e);

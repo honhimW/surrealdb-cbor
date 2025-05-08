@@ -2,27 +2,30 @@ package io.github.honhimw.surreal.cbor;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.JsonGeneratorDelegate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.cbor.CBORGenerator;
 import com.fasterxml.jackson.dataformat.cbor.CBORParser;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import io.github.honhimw.surreal.SurrealClient;
+import io.github.honhimw.surreal.model.RecordId;
 import io.github.honhimw.surreal.model.Response;
+import io.github.honhimw.surreal.model.Result;
 import io.github.honhimw.surreal.util.CborUtils;
 import io.github.honhimw.surreal.util.JsonUtils;
 import io.github.honhimw.surreal.util.UUIDUtils;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author honhimW
@@ -44,7 +47,11 @@ public class CborTests {
             .build();
         client = SurrealClient.builder()
             .host("10.37.1.132")
-            .build();
+            .namespace("surrealdb")
+            .database("surrealdb")
+            .username("root")
+            .password("root")
+            .blocking();
     }
 
     @Test
@@ -75,18 +82,39 @@ public class CborTests {
                 uuid_v4: rand::uuid::v4(),
                 uuid_v7: rand::uuid::v7(),
                 duration: duration::from::millis(2),
-                embedding: [0.1, 0.2, 0.3],
+                embedding: $__embedding,
                 uid: $uid,
                 range: <array> [0..3],
-                coordinates: {
-                    type: "MultiPoint",
-                    coordinates: [
-                        [10.0, 11.2],
-                        [10.5, 11.9]
-                    ],
-                 },
+                geos: [
+                    {
+                        type: "MultiPoint",
+                        coordinates: [
+                            [10.0, 11.2],
+                            [10.5, 11.9]
+                        ],
+                    },
+                    {
+                        type: "Polygon",
+                        coordinates: [[
+                            [-0.38314819, 51.37692386], [0.1785278, 51.37692386],
+                            [0.1785278, 51.61460570], [-0.38314819, 51.61460570],
+                            [-0.38314819, 51.37692386]
+                        ]]
+                    },
+                    {
+                        type: "MultiPolygon",
+                        coordinates: [
+                            [
+                                [ [10.0, 11.2], [10.5, 11.9], [10.8, 12.0], [10.0, 11.2] ]
+                            ],
+                            [
+                                [ [9.0, 11.2], [10.5, 11.9], [10.3, 13.0], [9.0, 11.2] ]
+                            ]
+                        ]
+                    }
+                ],
             };
-            """.formatted(uid));
+            """.formatted(uid), Map.of("__embedding", new float[]{0.123f, 0.234f, 0.321f}));
         JsonNode jsonNode1 = CborUtils.readTree(bytes);
         System.out.println("JsonUtils.toPrettyJson(jsonNode1) = " + JsonUtils.toPrettyJson(jsonNode1));
         byte[] encode = CborUtils.encode(jsonNode1);
@@ -126,6 +154,32 @@ public class CborTests {
     void rpc() {
         Object sql = client.sql("RETURN time::now();");
         System.out.println(sql);
+    }
+
+    @Test
+    @SneakyThrows
+    void content() {
+        Response sql = client.sql("""
+            UPSERT tmp CONTENT $content;
+            """, Map.of("content", Map.of(
+                "id", 1,
+            "foo", "bar",
+            "hello", "world"
+        )));
+        Result result = sql.last();
+        System.out.println(result.toPrettyString());
+        List<Content> contents = result.as(new TypeReference<>() {
+        });
+        System.out.println(contents.toString());
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class Content {
+        private RecordId id;
+        private String foo;
+        private String hello;
     }
 
 }

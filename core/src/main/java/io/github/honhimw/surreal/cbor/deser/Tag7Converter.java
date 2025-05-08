@@ -17,4 +17,5 @@ public class Tag7Converter implements Converter {
     public Table convert(JsonNode node) {
         return Table.of(node.asText());
     }
+
 }

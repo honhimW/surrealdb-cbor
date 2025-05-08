@@ -8,8 +8,6 @@ import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -33,13 +31,17 @@ import java.util.*;
 
 public class JsonUtils {
 
-    private static final ObjectMapper MAPPER = newMapper();
+    private static JsonMapper MAPPER = newMapper();
 
-    public static ObjectMapper mapper() {
+    public static JsonMapper mapper() {
         return MAPPER;
     }
 
-    public static ObjectMapper newMapper() {
+    public static void mapper(JsonMapper mapper) {
+        MAPPER = mapper;
+    }
+
+    public static JsonMapper newMapper() {
         return defaultBuilder().build();
     }
 

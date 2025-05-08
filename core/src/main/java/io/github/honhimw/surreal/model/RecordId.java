@@ -35,4 +35,8 @@ public class RecordId implements Serializable {
         return new RecordId(Table.of(table), Id.of(id));
     }
 
+    @Override
+    public String toString() {
+        return table.name + ":" + id.toString();
+    }
 }

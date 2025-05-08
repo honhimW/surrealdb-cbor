@@ -1,6 +1,10 @@
 package io.github.honhimw.surreal.client;
 
+import io.github.honhimw.surreal.QueryIdGenerator;
+import io.github.honhimw.surreal.ReactiveSurrealClient;
 import io.github.honhimw.surreal.SurrealClient;
+import io.github.honhimw.surreal.util.Helpers;
+import io.github.honhimw.surreal.util.ReactiveHttpUtils;
 
 /**
  * @author honhimW
@@ -9,13 +13,25 @@ import io.github.honhimw.surreal.SurrealClient;
 
 public class SurrealClientBuilder {
 
-    private Protocol protocol = Protocol.HTTP;
+    Protocol protocol = Protocol.HTTP;
 
-    private String host = "127.0.0.1";
+    String host = "127.0.0.1";
 
-    private int port = 8000;
+    int port = 8000;
 
-    private String basePath = "";
+    String username;
+
+    String password;
+
+    String namespace;
+
+    String database;
+
+    String basePath = "";
+
+    QueryIdGenerator idGenerator = new QueryIdGenerator.Default();
+
+    ReactiveHttpUtils httpUtils = ReactiveHttpUtils.getInstance();
 
     public SurrealClientBuilder protocol(Protocol protocol) {
         this.protocol = protocol;
@@ -32,13 +48,50 @@ public class SurrealClientBuilder {
         return this;
     }
 
+    public SurrealClientBuilder username(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public SurrealClientBuilder password(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public SurrealClientBuilder namespace(String namespace) {
+        this.namespace = namespace;
+        return this;
+    }
+
+    public SurrealClientBuilder database(String database) {
+        this.database = database;
+        return this;
+    }
+
     public SurrealClientBuilder basePath(String basePath) {
         this.basePath = basePath;
         return this;
     }
 
-    public SurrealClient build() {
-        return new SurrealClientImpl(protocol, host, port, basePath);
+    public SurrealClientBuilder idGenerator(QueryIdGenerator idGenerator) {
+        this.idGenerator = idGenerator;
+        return this;
+    }
+
+    public SurrealClientBuilder http(ReactiveHttpUtils http) {
+        this.httpUtils = http;
+        return this;
+    }
+
+    public ReactiveSurrealClient reactive() {
+        Helpers.state(Helpers.isNotBlank(namespace), "namespace must not be blank.");
+        Helpers.state(Helpers.isNotBlank(database), "database must not be blank.");
+        return new ReactiveSurrealClientImpl(this);
+    }
+
+    public SurrealClient blocking() {
+        ReactiveSurrealClient reactive = reactive();
+        return new SurrealClientImpl(reactive);
     }
 
 }

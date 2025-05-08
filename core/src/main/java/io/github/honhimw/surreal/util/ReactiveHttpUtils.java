@@ -269,6 +269,10 @@ public class ReactiveHttpUtils implements AutoCloseable {
         objectMapper = requestConfig.objectMapper;
     }
 
+    public HttpClient httpClient() {
+        return httpClient;
+    }
+
     /**
      * Sends an HTTP GET request to the specified URL.
      *
@@ -643,7 +647,7 @@ public class ReactiveHttpUtils implements AutoCloseable {
         return toReceiver(requestConfigurer);
     }
 
-    private Mono<HttpResult> execute(Consumer<Configurer> configurer) {
+    public Mono<HttpResult> execute(Consumer<Configurer> configurer) {
         Configurer requestConfigurer = new Configurer(this, _defaultRequestConfig);
         configurer.accept(requestConfigurer);
         try {
@@ -780,7 +784,10 @@ public class ReactiveHttpUtils implements AutoCloseable {
 
             private Duration connectTimeout = CONNECT_TIMEOUT;
             private Duration readTimeout = READ_TIMEOUT;
-            private HttpProtocol[] httpProtocols = {HttpProtocol.HTTP11, HttpProtocol.H2C};
+            private HttpProtocol[] httpProtocols = {
+                HttpProtocol.H2C
+//                , HttpProtocol.HTTP11 // Prefer Http2
+            };
             private String[] sslProtocols = {SslProtocols.TLS_v1_3, SslProtocols.TLS_v1_2};
             private boolean followRedirect = true;
             private boolean keepalive = true;

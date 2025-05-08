@@ -27,6 +27,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor'
+    testImplementation 'ch.qos.logback:logback-classic:1.5.18'
 
     testAnnotationProcessor libs.lombok
     testImplementation 'io.projectreactor:reactor-test'

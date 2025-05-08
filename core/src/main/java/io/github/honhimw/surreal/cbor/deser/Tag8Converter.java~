@@ -20,7 +20,7 @@ public class Tag8Converter implements Converter {
     public RecordId convert(JsonNode node) {
         String table = node.at("/0").asText();
         JsonNode id = node.at("/1");
-        if (id.isNumber()) {
+        if (id.isLong()) {
             return RecordId.of(table, id.longValue());
         } else if (id.isTextual()) {
             return RecordId.of(table, id.textValue());

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.honhimw.surreal.cbor.SurrealCustomTag;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * @author honhimW
@@ -24,6 +25,22 @@ public class Table implements Serializable {
 
     public static Table of(String name) {
         return new Table(name);
+    }
+
+    public RecordId id(Id id) {
+        return new RecordId(this, id);
+    }
+
+    public RecordId id(String id) {
+        return new RecordId(this, Id.of(id));
+    }
+
+    public RecordId id(long id) {
+        return new RecordId(this, Id.of(id));
+    }
+
+    public RecordId id(UUID id) {
+        return new RecordId(this, Id.of(id));
     }
 
 }

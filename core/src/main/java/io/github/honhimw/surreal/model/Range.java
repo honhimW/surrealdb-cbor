@@ -17,7 +17,7 @@ public class Range implements Serializable {
     public final Value upper;
 
     @JsonCreator
-    public Range(@JsonProperty("lower") Value lower, @JsonProperty("upperBound") Value upper) {
+    public Range(@JsonProperty("lower") Value lower, @JsonProperty("upper") Value upper) {
         this.lower = lower;
         this.upper = upper;
     }

@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
-import io.github.honhimw.surreal.util.CborUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.github.honhimw.surreal.util.JsonUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -17,34 +18,43 @@ import java.lang.reflect.Type;
 
 public class Result implements Serializable {
 
-    public final Object result;
-
     public final String status;
 
     public final String time;
 
+    public final JsonNode result;
+
     @JsonCreator
-    public Result(@JsonProperty("result") Object result, @JsonProperty("status") String status, @JsonProperty("time") String time) {
+    public Result(@JsonProperty("result") JsonNode result, @JsonProperty("status") String status, @JsonProperty("time") String time) {
         this.result = result;
         this.status = status;
         this.time = time;
     }
 
     public <R> R as(Class<R> type) {
-        return CborUtils.mapper().convertValue(result, type);
+        return JsonUtils.mapper().convertValue(result, type);
     }
 
     public <R> R as(JavaType type) {
-        return CborUtils.mapper().convertValue(result, type);
+        return JsonUtils.mapper().convertValue(result, type);
     }
 
     public <R> R as(TypeReference<R> type) {
-        return CborUtils.mapper().convertValue(result, type);
+        return JsonUtils.mapper().convertValue(result, type);
     }
 
     public <R> R as(Type type) {
-        CBORMapper mapper = CborUtils.mapper();
-        return CborUtils.mapper().convertValue(result, mapper.constructType(type));
+        JsonMapper mapper = JsonUtils.mapper();
+        return mapper.convertValue(result, mapper.constructType(type));
+    }
+
+    @Override
+    public String toString() {
+        return JsonUtils.toJson(this);
+    }
+
+    public String toPrettyString() {
+        return JsonUtils.toPrettyJson(this);
     }
 
 }

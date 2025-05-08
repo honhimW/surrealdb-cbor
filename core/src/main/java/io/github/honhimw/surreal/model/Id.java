@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -70,6 +71,18 @@ public class Id implements Serializable {
             return (UUID) value;
         }
         throw new IllegalStateException("Not a UUID id");
+    }
+
+    @Override
+    public String toString() {
+        switch (kind) {
+            case STRING:
+                return "⟨" + value.toString() + "⟩";
+            case UUID:
+                return "u'" + value.toString() + "'";
+            default:
+                return String.valueOf(value);
+        }
     }
 
     public enum Kind {
