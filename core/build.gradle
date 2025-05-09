@@ -216,7 +216,7 @@ tasks.register('publish-central') {
 Properties loadProfileProperties() {
     def properties = new Properties()
     properties.put('host', '127.0.0.1')
-    properties.put('port', '7700')
+    properties.put('port', '8000')
     properties.put('username', 'root')
     properties.put('password', 'root')
     properties.put('namespace', 'test')
@@ -230,8 +230,7 @@ Properties loadProfileProperties() {
 
 Properties githubProperties() {
     def properties = new Properties()
-
-    def file = file("github.properties")
+    def file = rootProject.file('github.properties')
     if (file.exists()) {
         file.withInputStream { properties.load(it) }
     }
@@ -240,8 +239,7 @@ Properties githubProperties() {
 
 Properties sonatypeProperties() {
     def properties = new Properties()
-
-    def file = file("sonatype.properties")
+    def file = rootProject.file('sonatype.properties')
     if (file.exists()) {
         file.withInputStream { properties.load(it) }
     }

@@ -2,6 +2,10 @@ plugins {
     id 'java'
 }
 
+if (file('maven-repository.gradle').exists()) {
+    apply from: file('maven-repository.gradle')
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
@@ -10,6 +14,20 @@ java {
 configurations {
     compileOnly { extendsFrom annotationProcessor }
     testCompileOnly { extendsFrom testAnnotationProcessor }
+}
+
+repositories {
+    maven {
+        allowInsecureProtocol true
+        name 'yfway-nexus'
+        url 'http://nexus.yfyun.gtland/yfang/repository/maven-public/'
+    }
+    mavenLocal()
+    mavenCentral()
+    maven {
+        name 'spring-milestones'
+        url 'https://repo.spring.io/milestone/'
+    }
 }
 
 dependencies {
@@ -34,6 +52,10 @@ dependencies {
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    testImplementation 'org.apache.commons:commons-lang3:3.17.0'
+    testImplementation 'org.openjdk.jmh:jmh-core:1.37'
+    testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 }
 
 

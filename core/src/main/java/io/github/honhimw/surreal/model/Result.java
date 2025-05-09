@@ -1,6 +1,7 @@
 package io.github.honhimw.surreal.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
@@ -31,6 +32,16 @@ public class Result implements Serializable {
         this.time = time;
     }
 
+    @JsonIgnore
+    public boolean isOkay() {
+        return Status.OK.validate(this.status);
+    }
+
+    @JsonIgnore
+    public boolean isError() {
+        return Status.ERR.validate(this.status);
+    }
+
     public <R> R as(Class<R> type) {
         return JsonUtils.mapper().convertValue(result, type);
     }
@@ -55,6 +66,18 @@ public class Result implements Serializable {
 
     public String toPrettyString() {
         return JsonUtils.toPrettyJson(this);
+    }
+
+
+    public enum Status implements Serializable {
+
+        OK, ERR,
+        ;
+
+        public boolean validate(String status) {
+            return this.name().equals(status);
+        }
+
     }
 
 }

@@ -3,7 +3,6 @@ version = '0.0.1'
 description = 'Reactive surrealdb rest client using cbor encoding.'
 
 subprojects {
-
     repositories {
         mavenLocal()
         mavenCentral()

@@ -2,11 +2,10 @@ HELP.md
 .gradle
 gradle.properties
 build/
-buildSrc/maven-repository.gradle
+sonatype.properties
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-buildSrc/rewrite.gradle
 rewrite.yaml
 
 ### STS ###

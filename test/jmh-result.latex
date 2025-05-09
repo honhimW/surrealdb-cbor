@@ -1,0 +1,7 @@
+\begin{tabular}{r|l|l|l|l|l|l|l|rl}
+ \multicolumn{1}{c|}{\texttt{Benchmark}} & \texttt{dataSize} & \texttt{database} & \texttt{host} & \texttt{namespace} & \texttt{password} & \texttt{port} & \texttt{username} & \multicolumn{2}{c}{\texttt{Score, ms/op}} \\
+\hline
+\texttt{BenchMarkTests.OfficialSdkHttp.ping} & \texttt{512} & \texttt{surrealsdk} & \texttt{10.37.1.132} & \texttt{surrealsdk} & \texttt{root} & \texttt{8000} & \texttt{root} & \texttt{66.080} & \scriptsize $\pm$ \texttt{1.854}  \\
+\texttt{BenchMarkTests.OfficialSdkWs.ping} & \texttt{512} & \texttt{surrealsdk} & \texttt{10.37.1.132} & \texttt{surrealsdk} & \texttt{root} & \texttt{8000} & \texttt{root} & \texttt{5.550} & \scriptsize $\pm$ \texttt{0.083}  \\
+\texttt{BenchMarkTests.This.ping} & \texttt{512} & \texttt{surrealsdk} & \texttt{10.37.1.132} & \texttt{surrealsdk} & \texttt{root} & \texttt{8000} & \texttt{root} & \texttt{59.905} & \scriptsize $\pm$ \texttt{1.548}  \\
+\end{tabular}

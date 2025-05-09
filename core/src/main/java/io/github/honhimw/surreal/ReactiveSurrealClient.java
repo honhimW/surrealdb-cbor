@@ -7,6 +7,7 @@ import jakarta.annotation.Nullable;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,6 +21,8 @@ public interface ReactiveSurrealClient extends AutoCloseable {
     static SurrealClientBuilder builder() {
         return new SurrealClientBuilder();
     }
+
+    SurrealClient blocking();
 
     /**
      * query [ sql, vars ]
@@ -83,6 +86,36 @@ public interface ReactiveSurrealClient extends AutoCloseable {
         return sql(sql, Collections.emptyMap());
     }
 
+    /**
+     * PING
+     *
+     * @return empty for success, exception for failed
+     */
+    Mono<Void> ping();
+
+    /**
+     * RELATE `in` -> `table` -> `out` content $data RETURN id;
+     *
+     * @param table table name
+     * @param in    in
+     * @param out   out
+     * @param data  relation content
+     * @return recordId
+     */
+    Mono<RecordId> relate(String table, RecordId in, RecordId out, Object data);
+
+    /**
+     * RELATE `in` -> `table` -> `out` content {} RETURN id;
+     *
+     * @param table table name
+     * @param in    in
+     * @param out   out
+     * @return recordId
+     */
+    default Mono<RecordId> relate(String table, RecordId in, RecordId out) {
+        return relate(table, in, out, new HashMap<>());
+    }
+
     /*
     =============================================================================
     Typed Client
@@ -91,38 +124,42 @@ public interface ReactiveSurrealClient extends AutoCloseable {
 
     /**
      * Typed client for single table id in string kind.
+     *
      * @param table table name
      * @param type  type of table
+     * @param <T>   table type
      * @return String kind id Typed client
-     * @param <T> table type
      */
-    <T> ReactiveTypedSurreal<T, String> string(String table, Class<T> type);
+    <T> ReactiveTypedSurrealClient<T, String> string(String table, Class<T> type);
 
     /**
      * Typed client for single table id in i64 kind.
+     *
      * @param table table name
      * @param type  type of table
+     * @param <T>   table type
      * @return Long kind id Typed client
-     * @param <T> table type
      */
-    <T> ReactiveTypedSurreal<T, Long> i64(String table, Class<T> type);
+    <T> ReactiveTypedSurrealClient<T, Long> i64(String table, Class<T> type);
 
     /**
      * Typed client for single table id in UUID kind.
+     *
      * @param table table name
      * @param type  type of table
+     * @param <T>   table type
      * @return UUID kind id Typed client
-     * @param <T> table type
      */
-    <T> ReactiveTypedSurreal<T, UUID> uuid(String table, Class<T> type);
+    <T> ReactiveTypedSurrealClient<T, UUID> uuid(String table, Class<T> type);
 
     /**
      * Typed client for single table id in RecordId.
+     *
      * @param table table name
      * @param type  type of table
+     * @param <T>   table type
      * @return RecordId Typed client
-     * @param <T> table type
      */
-    <T> ReactiveTypedSurreal<T, RecordId> record(Class<T> type);
+    <T> ReactiveTypedSurrealClient<T, RecordId> record(String table, Class<T> type);
 
 }

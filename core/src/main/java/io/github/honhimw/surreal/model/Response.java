@@ -15,10 +15,13 @@ import java.util.List;
 
 public class Response implements Serializable, Iterable<Result> {
 
+    public final Long id;
+
     public final List<Result> result;
 
     @JsonCreator
-    public Response(@JsonProperty("result") List<Result> result) {
+    public Response(@JsonProperty("id") Long id, @JsonProperty("result") List<Result> result) {
+        this.id = id;
         this.result = result;
     }
 
@@ -42,6 +45,15 @@ public class Response implements Serializable, Iterable<Result> {
 
     public Result get(int index) {
         return result.get(index);
+    }
+
+    public boolean hasError() {
+        for (Result r : result) {
+            if (r.isError()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

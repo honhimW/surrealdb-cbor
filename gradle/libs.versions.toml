@@ -4,7 +4,7 @@ reactor = "2024.0.5"
 jackson = "2.19.0"
 lombok = "1.18.38"
 slf4j = "2.0.17"
-surreal = "0.2.1"
+surreal = "0.2.2-SNAPSHOT"
 jakarta-annotations = "2.1.1"
 
 [libraries.reactor]

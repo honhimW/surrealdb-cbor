@@ -1,16 +1,14 @@
 package io.github.honhimw.surreal.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.POJONode;
 import io.github.honhimw.surreal.QueryIdGenerator;
 import io.github.honhimw.surreal.ReactiveSurrealClient;
-import io.github.honhimw.surreal.ReactiveTypedSurreal;
-import io.github.honhimw.surreal.model.Id;
-import io.github.honhimw.surreal.model.RecordId;
-import io.github.honhimw.surreal.model.Response;
-import io.github.honhimw.surreal.model.Table;
+import io.github.honhimw.surreal.ReactiveTypedSurrealClient;
+import io.github.honhimw.surreal.SurrealClient;
+import io.github.honhimw.surreal.model.*;
 import io.github.honhimw.surreal.util.CborUtils;
 import io.github.honhimw.surreal.util.Helpers;
-import io.github.honhimw.surreal.util.JsonUtils;
 import io.github.honhimw.surreal.util.ReactiveHttpUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import jakarta.annotation.Nullable;
@@ -71,6 +69,11 @@ class ReactiveSurrealClientImpl implements ReactiveSurrealClient {
     }
 
     @Override
+    public SurrealClient blocking() {
+        return new SurrealClientImpl(this);
+    }
+
+    @Override
     public Mono<Response> sql(String sql, @Nullable Map<String, Object> bindings) {
         return sqlBytes(sql, bindings)
             .map(bytes -> decodeAndThrowIfError(bytes, Response.class));
@@ -93,23 +96,58 @@ class ReactiveSurrealClientImpl implements ReactiveSurrealClient {
     }
 
     @Override
-    public <T> ReactiveTypedSurreal<T, String> string(String table, Class<T> type) {
-        return new ReactiveTypedSurrealImpl<>(this, type, Table.of(table), Id.Kind.STRING);
+    public Mono<Void> ping() {
+        Map<String, Object> body = new LinkedHashMap<>(2);
+        body.put("id", idGenerator.generate());
+        body.put("method", "ping");
+        return httpOps.execute(configurer -> configure(configurer, body))
+            .handle(this::handleResult)
+            .doOnNext(bytes -> decodeAndThrowIfError(bytes, JsonNode.class))
+            .then();
     }
 
     @Override
-    public <T> ReactiveTypedSurreal<T, Long> i64(String table, Class<T> type) {
-        return new ReactiveTypedSurrealImpl<>(this, type, Table.of(table), Id.Kind.LONG);
+    public Mono<RecordId> relate(String table, RecordId in, RecordId out, Object data) {
+        Helpers.state(Helpers.isNotBlank(table), "table should not be blank");
+        Map<String, Object> params = new LinkedHashMap<>(3);
+        params.put("in", in);
+        params.put("out", out);
+        params.put("data", data);
+        String sql = String.format("RELATE ONLY $in -> %s -> $out CONTENT $data RETURN id;", table);
+        return sqlBytes(sql, params)
+            .flatMap(bytes -> {
+                JsonNode jsonNode = decodeAndThrowIfError(bytes, JsonNode.class);
+                JsonNode status = jsonNode.at("/result/0/status");
+                if (!Helpers.exists(status)) {
+                    return Mono.error(new IllegalStateException("Unexpected result without statement result"));
+                }
+                JsonNode result = jsonNode.at("/result/0/result");
+                if (!Result.Status.OK.validate(status.textValue())) {
+                    return Mono.error(new IllegalStateException("Relate failed: " + result.asText()));
+                }
+                POJONode pojoNode = result.require();
+                return Mono.just(((RecordId) pojoNode.getPojo()));
+            });
     }
 
     @Override
-    public <T> ReactiveTypedSurreal<T, UUID> uuid(String table, Class<T> type) {
-        return new ReactiveTypedSurrealImpl<>(this, type, Table.of(table), Id.Kind.UUID);
+    public <T> ReactiveTypedSurrealClient<T, String> string(String table, Class<T> type) {
+        return new ReactiveTypedSurrealClientImpl<>(this, type, Table.of(table), Id.Kind.STRING);
     }
 
     @Override
-    public <T> ReactiveTypedSurreal<T, RecordId> record(Class<T> type) {
-        return new ReactiveTypedSurrealImpl<>(this, type, null, null);
+    public <T> ReactiveTypedSurrealClient<T, Long> i64(String table, Class<T> type) {
+        return new ReactiveTypedSurrealClientImpl<>(this, type, Table.of(table), Id.Kind.LONG);
+    }
+
+    @Override
+    public <T> ReactiveTypedSurrealClient<T, UUID> uuid(String table, Class<T> type) {
+        return new ReactiveTypedSurrealClientImpl<>(this, type, Table.of(table), Id.Kind.UUID);
+    }
+
+    @Override
+    public <T> ReactiveTypedSurrealClient<T, RecordId> record(String table, Class<T> type) {
+        return new ReactiveTypedSurrealClientImpl<>(this, type, Table.of(table), null);
     }
 
     @Override

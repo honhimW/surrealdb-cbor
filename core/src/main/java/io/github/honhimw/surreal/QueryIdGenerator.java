@@ -1,6 +1,6 @@
 package io.github.honhimw.surreal;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author honhimW
@@ -9,14 +9,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public interface QueryIdGenerator {
 
-    int generate();
+    long generate();
 
     class Default implements QueryIdGenerator {
 
-        private final AtomicInteger counter = new AtomicInteger(0);
+        private final AtomicLong counter = new AtomicLong(0);
 
         @Override
-        public int generate() {
+        public long generate() {
             return counter.getAndIncrement();
         }
     }
