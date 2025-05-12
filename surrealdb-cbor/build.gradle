@@ -1,0 +1,166 @@
+import com.vanniktech.maven.publish.SonatypeHost
+import org.apache.tools.ant.filters.ReplaceTokens
+
+import static java.nio.charset.StandardCharsets.UTF_8
+
+plugins {
+    id 'java-library'
+    id 'signing'
+    alias libs.plugins.publish
+}
+
+group = 'io.github.honhimw'
+version = libs.versions.version.get()
+description = 'Reactive surrealdb rest client using cbor encoding.'
+
+def title = 'SurrealDB REST Client for java'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+configurations {
+    compileOnly { extendsFrom annotationProcessor }
+    testCompileOnly { extendsFrom testAnnotationProcessor }
+}
+
+dependencies {
+    implementation platform(libs.jackson)
+    implementation platform(libs.reactor)
+
+    implementation 'io.projectreactor.netty:reactor-netty-http'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor'
+    implementation libs.slf4j
+
+    compileOnly libs.jakarta.annotations
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+
+    annotationProcessor libs.lombok
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+processTestResources {
+    def nm = new LinkedHashMap<String, String>()
+    project.properties.forEach { k, v ->
+        nm.put(k, v.toString())
+    }
+    nm.put('project.artifactId', project.name)
+    def properties = loadProfileProperties()
+    properties.forEach { k, v ->
+        nm.put(String.valueOf(k), String.valueOf(v))
+    }
+    filter ReplaceTokens, beginToken: '#{', endToken: '}', tokens: nm
+}
+
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+
+    coordinates(group, name, version)
+
+    pom {
+        name = title
+        description = project.description
+        url = 'https://github.com/honhimW/surrealdb-cbor'
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+        developers {
+            developer {
+                id = 'honhimw'
+                name = 'honhimw'
+                url = 'https://honhimW.github.io'
+                email = 'honhimw@outlook.com'
+            }
+        }
+        scm {
+            url = 'https://github.com/honhimW/surrealdb-cbor'
+            connection = 'scm:git:git://github.com/honhimW/surrealdb-cbor.git'
+            developerConnection = 'scm:git:ssh://github.com/honhimW/surrealdb-cbor.git'
+        }
+    }
+
+}
+
+signing {
+    def props = mavenCentralProperties()
+    def keyId = props.getProperty('signing.keyId')
+    def ringFile = props.getProperty('signing.secretKeyBase64')
+    def password = props.getProperty('signing.password')
+    if (!(keyId == null || ringFile == null || password == null)) {
+        useInMemoryPgpKeys(keyId, ringFile, password)
+//        sign publishing.publications.gpr
+    }
+}
+
+jar {
+    enabled(true)
+//    archiveClassifier = ''
+}
+
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = UTF_8.name()
+//    options.forkOptions.jvmArgs += ['-Duser.language=en', '-Duser.country=NO']
+    inputs.files(tasks.withType(ProcessResources))
+//    options.compilerArgs << '-Werror' << '-Xlint:deprecation' << '-Xlint:unchecked'
+}
+
+tasks.register('publish-snapshot') {
+    version = version + '-SNAPSHOT'
+    finalizedBy ':publishAllPublicationsToSonatype-snapshotsRepository'
+}
+tasks.register('publish-release') {
+    finalizedBy ':publishAllPublicationsToSonatype-releasesRepository'
+}
+tasks.register('publish-central') {
+    finalizedBy ':publishAllPublicationsToSonatype-centralRepository'
+}
+
+Properties loadProfileProperties() {
+    def properties = new Properties()
+    properties.put('host', '127.0.0.1')
+    properties.put('port', '8000')
+    properties.put('username', 'root')
+    properties.put('password', 'root')
+    properties.put('namespace', 'test')
+    properties.put('database', 'test')
+    def file = file("profile-${findProperty('profiles.active')}.properties")
+    if (file.exists()) {
+        file.withInputStream { properties.load(it) }
+    }
+    return properties
+}
+
+Properties githubProperties() {
+    def properties = new Properties()
+    def file = rootProject.file('github.properties')
+    if (file.exists()) {
+        file.withInputStream { properties.load(it) }
+    }
+    return properties
+}
+
+Properties mavenCentralProperties() {
+    def properties = new Properties()
+    def file = rootProject.file('sonatype.properties')
+    if (file.exists()) {
+        file.withInputStream { properties.load(it) }
+    }
+    ext.setGradleProperties(properties as Map<String, Object>)
+    return properties
+}

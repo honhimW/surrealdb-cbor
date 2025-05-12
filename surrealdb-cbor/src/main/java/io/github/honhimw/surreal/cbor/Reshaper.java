@@ -1,6 +1,5 @@
 package io.github.honhimw.surreal.cbor;
 
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -8,9 +7,9 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @since 2025-04-30
  */
 
-public interface Converter {
+public interface Reshaper {
 
-    default Object convert(JsonNode node) {
+    default Object reshape(JsonNode node) {
         return node;
     }
 

@@ -2,7 +2,7 @@ package io.github.honhimw.surreal.cbor.deser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.POJONode;
-import io.github.honhimw.surreal.cbor.Converter;
+import io.github.honhimw.surreal.cbor.Reshaper;
 import io.github.honhimw.surreal.model.RecordId;
 
 import java.util.UUID;
@@ -12,12 +12,12 @@ import java.util.UUID;
  * @since 2025-05-06
  */
 
-public class Tag8Converter implements Converter {
+public class Tag8Reshaper implements Reshaper {
 
-    public static final Tag8Converter INSTANCE = new Tag8Converter();
+    public static final Tag8Reshaper INSTANCE = new Tag8Reshaper();
 
     @Override
-    public RecordId convert(JsonNode node) {
+    public RecordId reshape(JsonNode node) {
         String table = node.at("/0").asText();
         JsonNode id = node.at("/1");
         if (id.isNumber()) {

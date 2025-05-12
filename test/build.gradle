@@ -34,7 +34,7 @@ dependencies {
     implementation platform(libs.reactor)
     implementation platform(libs.jackson)
 
-    implementation project(':core')
+    implementation project(':surrealdb-cbor')
 
     implementation libs.slf4j
     testImplementation libs.surreal

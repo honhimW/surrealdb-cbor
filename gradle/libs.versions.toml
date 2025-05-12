@@ -6,6 +6,7 @@ lombok = "1.18.38"
 slf4j = "2.0.17"
 surreal = "0.2.2-SNAPSHOT"
 jakarta-annotations = "2.1.1"
+central-publish = "0.31.0"
 
 [libraries.reactor]
 module = "io.projectreactor:reactor-bom"
@@ -30,3 +31,7 @@ version.ref = "surreal"
 [libraries.jakarta-annotations]
 module = "jakarta.annotation:jakarta.annotation-api"
 version.ref = "jakarta-annotations"
+
+[plugins.publish]
+id = "com.vanniktech.maven.publish"
+version.ref = "central-publish"

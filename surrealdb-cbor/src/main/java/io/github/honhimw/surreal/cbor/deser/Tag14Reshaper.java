@@ -2,24 +2,24 @@ package io.github.honhimw.surreal.cbor.deser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import io.github.honhimw.surreal.cbor.Converter;
+import io.github.honhimw.surreal.cbor.Reshaper;
 
-import java.time.Instant;
+import java.time.Duration;
 
 /**
  * @author honhimW
  * @since 2025-05-06
  */
 
-public class Tag12Converter implements Converter {
+public class Tag14Reshaper implements Reshaper {
 
-    public static final Tag12Converter INSTANCE = new Tag12Converter();
+    public static final Tag14Reshaper INSTANCE = new Tag14Reshaper();
 
     @Override
-    public Instant convert(JsonNode node) {
+    public Duration reshape(JsonNode node) {
         ArrayNode arrayNode = node.require();
         long seconds = arrayNode.at("/0").asLong(0);
         long nanoSeconds = arrayNode.at("/1").asLong(0);
-        return Instant.ofEpochSecond(seconds, nanoSeconds);
+        return Duration.ofSeconds(seconds, nanoSeconds);
     }
 }

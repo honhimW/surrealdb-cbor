@@ -1,3 +1,3 @@
-rootProject.name = 'surrealdb-cbor'
+rootProject.name = 'surrealdb-client'
 include 'test'
-include 'core'
+include 'surrealdb-cbor'

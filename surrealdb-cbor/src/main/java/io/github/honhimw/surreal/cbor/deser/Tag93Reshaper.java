@@ -3,7 +3,7 @@ package io.github.honhimw.surreal.cbor.deser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.POJONode;
-import io.github.honhimw.surreal.cbor.Converter;
+import io.github.honhimw.surreal.cbor.Reshaper;
 import io.github.honhimw.surreal.model.Geometry;
 
 import java.util.ArrayList;
@@ -14,20 +14,20 @@ import java.util.List;
  * @since 2025-05-06
  */
 
-public class Tag89Converter implements Converter {
+public class Tag93Reshaper implements Reshaper {
 
-    public static final Tag89Converter INSTANCE = new Tag89Converter();
+    public static final Tag93Reshaper INSTANCE = new Tag93Reshaper();
 
     @Override
-    public Geometry.Line convert(JsonNode node) {
+    public Geometry.MultiPolygon reshape(JsonNode node) {
         ArrayNode arrayNode = node.require();
-        List<Geometry.Point> points = new ArrayList<>(arrayNode.size());
+        List<Geometry.Polygon> polygons = new ArrayList<>(arrayNode.size());
         for (JsonNode jsonNode : arrayNode) {
             POJONode pojoNode = jsonNode.require();
-            Geometry.Point point = (Geometry.Point) pojoNode.getPojo();
-            points.add(point);
+            Geometry.Polygon polygon = (Geometry.Polygon) pojoNode.getPojo();
+            polygons.add(polygon);
         }
-        return Geometry.line(points);
+        return new Geometry.MultiPolygon(polygons);
     }
 
 }

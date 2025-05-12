@@ -14,6 +14,9 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -64,17 +67,17 @@ public class BenchMarkTests {
 
         String text;
 
-        float[] embedding;
+        List<Float> embedding;
 
         @SneakyThrows
         @Setup(Level.Trial)
         public void setup() {
             text = RandomStringUtils.insecure().nextAlphanumeric(dataSize);
             RandomUtils insecure = RandomUtils.insecure();
-            embedding = new float[dataSize];
+            embedding = new ArrayList<>(dataSize);
             for (int i = 0; i < dataSize; i++) {
                 float v = insecure.randomFloat(0, 10);
-                embedding[i] = v;
+                embedding.add(i, v);
             }
         }
 
@@ -88,10 +91,28 @@ public class BenchMarkTests {
         @OutputTimeUnit(TimeUnit.MILLISECONDS)
         @Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
         @Measurement(iterations = 10, time = 10, timeUnit = TimeUnit.SECONDS)
-        @Fork(1)
+        @Threads(4)
+        @Fork(2)
         public void ping() {
+            Sql sql = new Sql("""
+                RETURN {
+                  content: $content,
+                  embedding: $embedding,
+                };
+                """, Map.of(
+                "content", text,
+                "embedding", embedding
+            ));
+            execute(sql);
+        }
+
+        public void execute(Sql sql) {
 
         }
+    }
+
+    public record Sql(String sql, Map<String, Object> param) {
+
     }
 
     public static class This extends BenchMark {
@@ -112,9 +133,9 @@ public class BenchMarkTests {
         }
 
         @Override
-        public void ping() {
-            io.github.honhimw.surreal.model.Response sql = client.sql("PING;");
-            sql.last();
+        public void execute(Sql sql) {
+            io.github.honhimw.surreal.model.Response response = client.sql(sql.sql, sql.param);
+            response.last();
         }
     }
 
@@ -133,8 +154,8 @@ public class BenchMarkTests {
         }
 
         @Override
-        public void ping() {
-            Response query = surreal.query("PING;");
+        public void execute(Sql sql) {
+            Response query = surreal.queryBind(sql.sql, sql.param);
             query.take(0);
         }
     }
@@ -154,8 +175,8 @@ public class BenchMarkTests {
         }
 
         @Override
-        public void ping() {
-            Response query = surreal.query("PING;");
+        public void execute(Sql sql) {
+            Response query = surreal.queryBind(sql.sql, sql.param);
             query.take(0);
         }
     }

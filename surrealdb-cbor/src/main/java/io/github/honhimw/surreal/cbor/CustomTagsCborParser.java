@@ -37,7 +37,6 @@ public class CustomTagsCborParser extends CborParserDelegate {
         return jsonToken;
     }
 
-
     @Override
     public Object getEmbeddedObject() throws IOException {
         if (this.customValue != null) {
