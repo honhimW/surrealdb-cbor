@@ -2,11 +2,10 @@ HELP.md
 .gradle
 gradle.properties
 build/
-sonatype.properties
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-rewrite.yaml
+**/jmh-result.latex
 
 ### STS ###
 .apt_generated
