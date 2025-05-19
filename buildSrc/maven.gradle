@@ -1,0 +1,13 @@
+/**
+ * ###################################################################
+ * Repositories configuration
+ * ###################################################################
+ */
+if (rootProject.file('buildSrc/maven-repository.gradle').exists()) {
+    apply from: rootProject.file('buildSrc/maven-repository.gradle')
+} else {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}

@@ -1,0 +1,26 @@
+apply plugin: 'java-library'
+apply from: rootProject.file('buildSrc/imports.gradle')
+apply from: rootProject.file('buildSrc/maven.gradle')
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(JavaCompile).configureEach {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    options.encoding('UTF-8')
+    inputs.files(tasks.withType(ProcessResources))
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+//    options.compilerArgs << "-Werror" << "-Xlint:deprecation" << "-Xlint:unchecked"
+}
+
+dependencies {
+    imports platform(libs.jackson)
+    imports platform(libs.reactor)
+}
+
+test {
+    useJUnitPlatform()
+}

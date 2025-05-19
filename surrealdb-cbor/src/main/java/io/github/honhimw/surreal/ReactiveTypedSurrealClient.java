@@ -95,6 +95,7 @@ public interface ReactiveTypedSurrealClient<T, ID> {
      * @param entities more
      * @return result
      */
+    @SuppressWarnings("unchecked")
     default Flux<T> insert(T entity, T... entities) {
         int size = entities.length + 1;
         List<T> list = new ArrayList<>(size);

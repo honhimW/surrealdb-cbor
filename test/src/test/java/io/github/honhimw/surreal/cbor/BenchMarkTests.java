@@ -43,11 +43,10 @@ public class BenchMarkTests {
     @State(Scope.Benchmark)
     public static abstract class BenchMark {
 
-        @Param({"512"})
-//        @Param({"512", "1024", "2048"})
+        @Param({"256", "512"})
         public int dataSize;
 
-        @Param({"10.37.1.132"})
+        @Param({"127.0.0.1"})
         public String host;
 
         @Param({"8000"})

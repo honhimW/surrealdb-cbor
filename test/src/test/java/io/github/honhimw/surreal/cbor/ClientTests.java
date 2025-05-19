@@ -45,7 +45,7 @@ public class ClientTests {
             .addModule(JsonUtils.timeModule())
             .build();
         client = SurrealClient.builder()
-            .host("10.37.1.132")
+            .host("127.0.0.1")
             .namespace("surrealdb")
             .database("surrealdb")
             .username("root")

@@ -1,0 +1,26 @@
+configurations {
+    def imports = create("imports") {
+        visible false
+        canBeResolved false
+        canBeConsumed false
+        canBeDeclared true
+    }
+
+    compileClasspath { extendsFrom imports }
+    runtimeClasspath { extendsFrom imports }
+    annotationProcessor { extendsFrom imports }
+
+    testCompileClasspath { extendsFrom imports }
+    testRuntimeClasspath { extendsFrom imports }
+    testAnnotationProcessor { extendsFrom imports }
+
+    implementation { extendsFrom imports }
+    compileOnly { extendsFrom annotationProcessor }
+    testCompileOnly { extendsFrom testAnnotationProcessor }
+
+    configureEach {
+        resolutionStrategy {
+            cacheChangingModulesFor 0, "SECONDS"
+        }
+    }
+}

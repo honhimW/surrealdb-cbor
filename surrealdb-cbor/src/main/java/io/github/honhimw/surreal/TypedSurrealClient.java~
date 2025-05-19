@@ -88,7 +88,6 @@ public interface TypedSurrealClient<T, ID> {
      * @param entities more
      * @return result
      */
-    @SuppressWarnings("unchecked")
     List<T> insert(T entity, T... entities);
 
     /**

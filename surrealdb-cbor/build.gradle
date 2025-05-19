@@ -9,26 +9,15 @@ plugins {
     alias libs.plugins.publish
 }
 
+apply from: rootProject.file('buildSrc/library.gradle')
+
 group = 'io.github.honhimw'
 version = libs.versions.version.get()
-description = 'Reactive surrealdb rest client using cbor encoding.'
+description = 'Reactive surrealdb client using cbor encoding.'
 
-def title = 'SurrealDB REST Client for java'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-configurations {
-    compileOnly { extendsFrom annotationProcessor }
-    testCompileOnly { extendsFrom testAnnotationProcessor }
-}
+def title = 'SurrealDB CBOR Client for java'
 
 dependencies {
-    implementation platform(libs.jackson)
-    implementation platform(libs.reactor)
-
     implementation 'io.projectreactor.netty:reactor-netty-http'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
@@ -41,12 +30,6 @@ dependencies {
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 
     annotationProcessor libs.lombok
-}
-
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 processTestResources {
@@ -96,20 +79,8 @@ mavenPublishing {
 
 }
 
-signing {
-    def props = mavenCentralProperties()
-    def keyId = props.getProperty('signing.keyId')
-    def ringFile = props.getProperty('signing.secretKeyBase64')
-    def password = props.getProperty('signing.password')
-    if (!(keyId == null || ringFile == null || password == null)) {
-        useInMemoryPgpKeys(keyId, ringFile, password)
-//        sign publishing.publications.gpr
-    }
-}
-
 jar {
     enabled(true)
-//    archiveClassifier = ''
 }
 
 
@@ -128,7 +99,7 @@ tasks.register('publish-release') {
     finalizedBy ':publishAllPublicationsToSonatype-releasesRepository'
 }
 tasks.register('publish-central') {
-    finalizedBy ':publishAllPublicationsToSonatype-centralRepository'
+    finalizedBy ':publishMavenPublicationToMavenCentralRepository'
 }
 
 Properties loadProfileProperties() {

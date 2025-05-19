@@ -72,6 +72,7 @@ public abstract class CborSerializer<T> extends JsonSerializer<T> {
         return super.handledType();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isEmpty(T value) {
         return super.isEmpty(value);

@@ -12,11 +12,8 @@ subprojects {
 
 tasks.register('publish-snapshot') {
     version = version + '-SNAPSHOT'
-    finalizedBy ':core:publishAllPublicationsToSonatype-snapshotsRepository'
-}
-tasks.register('publish-release') {
-    finalizedBy ':core:publishAllPublicationsToSonatype-releasesRepository'
+    finalizedBy ':surrealdb-cbor:publishMavenPublicationToMavenCentralRepository'
 }
 tasks.register('publish-central') {
-    finalizedBy ':core:publishAllPublicationsToSonatype-centralRepository'
+    finalizedBy ':surrealdb-cbor:publishMavenPublicationToMavenCentralRepository'
 }

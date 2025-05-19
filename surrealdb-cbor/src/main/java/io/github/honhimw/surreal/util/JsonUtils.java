@@ -202,7 +202,7 @@ public class JsonUtils {
         try {
             JsonNode jsonNode = MAPPER.valueToTree(o);
             if (jsonNode.isObject()) {
-                jsonNode.fields().forEachRemaining(entry -> {
+                jsonNode.properties().forEach(entry -> {
                     String key = entry.getKey();
                     JsonNode node = entry.getValue();
                     String p = path + separator + key;

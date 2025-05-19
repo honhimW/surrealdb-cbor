@@ -67,6 +67,7 @@ class TypedSurrealClientImpl<T, ID> implements TypedSurrealClient<T, ID> {
         return Helpers.blockNonNull(client.insert(entities));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> insert(T entity, T... entities) {
         return Helpers.blockNonNull(client.insert(entity, entities));
