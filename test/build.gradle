@@ -16,20 +16,6 @@ configurations {
     testCompileOnly { extendsFrom testAnnotationProcessor }
 }
 
-repositories {
-    maven {
-        allowInsecureProtocol true
-        name 'yfway-nexus'
-        url 'http://nexus.yfyun.gtland/yfang/repository/maven-public/'
-    }
-    mavenLocal()
-    mavenCentral()
-    maven {
-        name 'spring-milestones'
-        url 'https://repo.spring.io/milestone/'
-    }
-}
-
 dependencies {
     implementation platform(libs.reactor)
     implementation platform(libs.jackson)
